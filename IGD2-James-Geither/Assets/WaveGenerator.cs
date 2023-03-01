@@ -24,7 +24,7 @@ public class WaveGenerator : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        //sqrt (pool-length * pool-length + pool-width * pool-width)
+
         mesh = this.GetComponent<MeshFilter>().mesh;
         Bounds bounds = mesh.bounds;
 
@@ -66,9 +66,13 @@ public class WaveGenerator : MonoBehaviour
         }
     }
 
+
+
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("HIT");
+
+
 
         t0 = Time.time;
         GetComponent<Collider>().enabled = false;
