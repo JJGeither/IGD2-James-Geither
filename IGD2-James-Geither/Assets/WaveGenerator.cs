@@ -8,7 +8,6 @@ public class WaveGenerator : MonoBehaviour
     public float Velocity = 5;
     public float WaveLength = 2;
     public float speedOfDecay = .5f;
-    private float time = 5;
     private float poolDimension;
     private float r;
     private bool startWave;
@@ -24,7 +23,6 @@ public class WaveGenerator : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-
         mesh = this.GetComponent<MeshFilter>().mesh;
         Bounds bounds = mesh.bounds;
 
@@ -40,7 +38,7 @@ public class WaveGenerator : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             GetComponent<Collider>().enabled = true;
         }
@@ -51,38 +49,37 @@ public class WaveGenerator : MonoBehaviour
             for (var v = 0; v < verts.Length; v++)
             {
                 Vector3 vertex = verts[v];
-                float x = vertex.x;
-                float z = vertex.z;
+                float x = transform.TransformPoint(vertex).x;
+                float z = transform.TransformPoint(vertex).z;
                 r = Mathf.Sqrt((x - x0) * (x - x0) + (z - z0) * (z - z0));
                 distance = r / poolDimension;
                 float time = Time.time - t0;
-                vertex.y = Amplitude * Mathf.Exp(-distance - (speedOfDecay * time)) * Mathf.Cos(2 * Mathf.PI * (distance - Velocity * time) / WaveLength);
-                //vertex.y = CalculateWave();
+                vertex.y = Amplitude * Mathf.Exp(-distance - (speedOfDecay * time)) * Mathf.Cos(2 * Mathf.PI * (r - Velocity * time) / WaveLength);
                 verts[v] = vertex;
             }
+
             mesh.vertices = verts;
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
         }
     }
 
-
-
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("HIT");
-
-
 
         t0 = Time.time;
         GetComponent<Collider>().enabled = false;
         // Get the collision point
         Vector3 collisionPoint = collision.contacts[0].point;
 
-        //GetComponent<Collider>().enabled = false;
-        // Calculate the wave parameters based on the collision point
+        // Draw a line from the origin of the wave to the collision point
+        Debug.DrawLine(transform.position, collisionPoint, Color.red, 1.0f);
+
+        // Set the wave origin to the collision point
         x0 = collisionPoint.x;
         z0 = collisionPoint.z;
+
         startWave = true;
     }
 }
