@@ -38,10 +38,65 @@ public class WaveGenerator : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.C))
         {
             GetComponent<Collider>().enabled = true;
         }
+
+        if (Input.anyKeyDown)
+        {
+            string inputString = Input.inputString;
+            if (!string.IsNullOrEmpty(inputString))
+            {
+                char inputChar = inputString[0];
+                if (inputChar == 'A' || inputChar == 'a') // Only work for 'A' and 'a'
+                {
+                    if (char.IsUpper(inputChar))
+                    {
+                        Amplitude += 0.1f; // Increase the amplitude for uppercase input
+                    }
+                    else if (char.IsLower(inputChar))
+                    {
+                        Amplitude -= 0.1f; // Decrease the amplitude for lowercase input
+                    }
+                }
+
+                if (inputChar == 'L' || inputChar == 'l') // Only work for 'A' and 'a'
+                {
+                    if (char.IsUpper(inputChar))
+                    {
+                        WaveLength += 0.1f; // Increase the amplitude for uppercase input
+                    }
+                    else if (char.IsLower(inputChar))
+                    {
+                        WaveLength -= 0.1f; // Decrease the amplitude for lowercase input
+                    }
+                }
+
+                if (inputChar == 'V' || inputChar == 'v') // Only work for 'A' and 'a'
+                {
+                    if (char.IsUpper(inputChar))
+                    {
+                        Velocity += 0.1f; // Increase the amplitude for uppercase input
+                    }
+                    else if (char.IsLower(inputChar))
+                    {
+                        Velocity -= 0.1f; // Decrease the amplitude for lowercase input
+                    }
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+
+        }
+
 
         if (startWave)
         {

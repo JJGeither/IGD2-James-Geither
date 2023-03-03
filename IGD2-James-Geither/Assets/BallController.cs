@@ -10,6 +10,8 @@ public class BallController : MonoBehaviour
     public float speed;
     public Vector3[] stairVectors;
     public Vector3[] jumpVectors;
+    public int score;
+    public bool moving;
 
     private void Start()
     {
@@ -17,30 +19,40 @@ public class BallController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         particleSystem = particles.GetComponent<ParticleSystem>();
         ParticlesFalse();
+        score = 0;
+        moving = false;
     }
 
     // Update is called once per frame
     private void Update()
     {
         // Check if the 'r' key is pressed
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !moving)
         {
-            // Reset the object's position to (0, 0, 0)
-            transform.position = new Vector3(0f, 10f, 0f);
+            EnablePhysics();
+            transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+            transform.position = new Vector3(0f, 15f, 5f);
 
-            // Reset the object's velocity to zero
+            rb.angularVelocity = Vector3.zero;
             rb.velocity = Vector3.zero;
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C) && !moving)
         {
             Debug.Log("Moving");
+            transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+            transform.position = stairVectors[0];
+
+            // Reset the object's velocity to zero
+            rb.velocity = Vector3.zero;
             StartCoroutine(MoveTo(stairVectors, speed, false));
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !moving)
         {
+            transform.rotation = Quaternion.Euler(-90f, 90f, 0f);
             Debug.Log("Moving");
+            transform.position = jumpVectors[0];
             StartCoroutine(MoveTo(jumpVectors, speed, true));
         }
     }
@@ -49,6 +61,7 @@ public class BallController : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Water"))
         {
+            score++;
             ActivateParticles();
         }
     }
@@ -77,7 +90,7 @@ public class BallController : MonoBehaviour
     private IEnumerator MoveTo(Vector3[] pointB, float speed, bool isDive)
     {
         DisablePhysics();
-
+        moving = true;
         foreach (var i in pointB)
         {
             float distanceToB = Vector3.Distance(this.transform.position, i);
@@ -94,7 +107,9 @@ public class BallController : MonoBehaviour
             EnablePhysics();
             Rigidbody rigidbody = GetComponent<Rigidbody>();
             rigidbody.AddForce(new Vector3(200, 400, 0));
+            rigidbody.angularVelocity = new Vector3(0, 0, -20);
         }
+        moving = false;
     }
 
     public void ParticlesFalse()
